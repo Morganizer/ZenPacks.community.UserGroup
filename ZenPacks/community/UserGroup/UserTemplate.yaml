@@ -1,0 +1,23 @@
+name: ZenPacks.community.UserGroup
+device_classes: !ZenPackSpec
+  /Server/Linux/UserGroup:
+    templates:
+      User:
+        datasources:
+          numGroups:
+            type: COMMAND
+            component: ${here/id}
+            commandTemplate: /usr/bin/id -G ${here/id} | /usr/bin/wc -w
+            cycletime: 60
+            datapoints:
+              numGroups: GAUGE
+            usessh: true
+        graphs:
+          Number of Groups:
+            height: 100
+            width: 500
+            units: groups
+            graphpoints:
+              numGroups:
+                dpName: numGroups_numGroups
+

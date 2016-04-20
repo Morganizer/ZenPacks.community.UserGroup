@@ -1,0 +1,179 @@
+name: ZenPacks.community.UserGroup
+
+zProperties:
+  DEFAULT:
+    category: UserGroup
+  zMinUID:
+    type: string     # note this is string, not int
+    default: 0
+
+device_classes:
+  /Server/Linux/UserGroup:
+    remove: False   # False is default - ensure no instances left in this class when ZenPack removed
+    zProperties:
+      zPythonClass: ZenPacks.community.UserGroup.UserGroupDevice
+      zSshConcurrentSessions: 5
+      zDeviceTemplates:
+        - Device
+      zCollectorPlugins: ['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'zenoss.snmp.IpServiceMap', 'zenoss.snmp.HRFileSystemMap', 'zenoss.snmp.HRSWRunMap', 'zenoss.snmp.CpuMap', 'zenoss.snmp.SnmpV3EngineIdMap', 'cmd.UserGroupMap']
+    templates:
+      User:
+        datasources:
+          numGroups:
+            type: COMMAND
+            component: ${here/id}
+            commandTemplate: /usr/bin/id -G ${here/id} | /usr/bin/wc -w
+            cycletime: 60
+            datapoints:
+              numGroups: GAUGE
+            usessh: true
+        graphs:
+          Number of Groups:
+            height: 100
+            width: 500
+            units: groups
+            graphpoints:
+              numGroups:
+                dpName: numGroups_numGroups
+
+classes:
+  DEFAULTS:
+    base: [zenpacklib.Component]
+
+  UserGroupDevice:
+    base: [zenpacklib.Device]
+    meta_type: UserGroupDevice  # Will default to this but in for completeness
+    label: UserGroup Host
+    icon: four-tux-56x56.png
+
+    relationships:
+      userGroups:
+        label: User Groups
+        display: true   # this has no effect as it is on the device class
+
+  UserGroup:
+    label: User Group  # NB It is label, with spaces removed, that is used to match a component template
+    meta_type: UserGroup   # Will default to this but in for completeness
+    label_width: 50    # This controls the column width for UserGroup in the Users component display
+    order: 20          # before User; lower numbers nearer top / left
+    auto_expand_column: secondaryUsers
+    monitoring_templates: [UserGroup]  # will default to UserGroup but explicit for clarity
+
+    properties:
+      groupName:
+        type: string
+        label: Group name
+        short_label: Group
+        label_width: 150
+        order: 3.1
+
+      GID:
+        type: int
+        label: GID
+        short_label: GID
+        label_width: 60
+        order: 3.2
+
+      secondaryUsers:
+        type: string
+        label: Secondary Users
+        short_label: Secondaries
+        label_width: 300
+        order: 3.3
+
+      hasSecondaries:
+        type: string
+        label: Has Secondaries?
+        short_label: Has Sec?
+        label_width: 40
+        renderer: Zenoss.render.severity   # Use event severity renderer
+        order: 3.4
+
+    relationships:
+      userGroupDevice:            # back to the containing device
+        label: userGroupDevice
+        display: true             # Ensures relationship shown in Details dropdown
+      users:                      # down to User sub-component
+        label: users
+        display: true             # Relationship shown on grid and Details
+
+  User:
+    label: User        # NB It is label, with spaces removed, that is used to match a component template
+    meta_type: User    # Will default to this but in for completeness
+    label_width: 50    # This controls the column width for Users in the UserGroup component display
+    order: 30          #  after  UserGroup
+    auto_expand_column: userComment
+    monitoring_templates: [User]  # will default to User but explicit for clarity
+
+    properties:
+      userName:
+        type: string
+        label: User name
+        short_label: User
+        label_width: 60
+        order: 3.1
+
+      UID:
+        type: int
+        label: UID
+        short_label: UID
+        label_width: 30
+        order: 3.2
+
+      primaryGID:
+        type: int
+        label: primaryGID
+        short_label: GID
+        label_width: 30
+        order: 3.3
+
+      primaryGroupName:
+        type: string
+        label: Primary Group Name
+        short_label: Group Name
+        label_width: 60
+        order: 3.5
+
+      userComment:
+        type: string
+        label: User Comment
+        short_label: Comment
+        label_width: 150
+        editable: true    # default is false
+        order: 3.6
+
+      homeDir:
+        type: string
+        label: Home Directory
+        short_label: Home
+        label_width: 120
+        order: 3.7
+
+      commandShell:
+        type: string
+        label: Command / Shell
+        short_label: Shell
+        label_width: 150
+        order: 3.8
+        display: false   # overridden by grid_display and details_display
+        grid_display: false
+        details_display: true
+
+    relationships:
+      primaryUserGroup:            # back to the containing primary UserGroup
+        label: primaryUserGroup    # label for userGroup in users component panel taken from UserGroup label, not from here
+        display: true
+        grid_display:  false  # this does control whether UserGroup displayed in users component panel
+        details_display: true
+        label_width: 20      # this does NOT control width of UserGroup in users component panel
+        order: 3.3
+
+class_relationships:
+  - UserGroupDevice(userGroups) 1:MC UserGroup(userGroupDevice)
+  - UserGroup(users) 1:MC User(primaryUserGroup)
+
+
+
+
+
+ 
