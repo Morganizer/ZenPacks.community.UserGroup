@@ -5,8 +5,7 @@ ZenPacks.community.UserGroup
 
 Description
 ===========
-This ZenPack monitors particular directories and files within those directories for
-existence and size.  
+This ZenPack monitors Operating System users and user groups.
 
 Version 1.0.0 in the master branch uses COMMAND bash scripts for both modeling and performance
 data collection.
