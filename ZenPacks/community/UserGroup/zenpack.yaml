@@ -14,6 +14,7 @@ device_classes:
       zPythonClass: ZenPacks.community.UserGroup.UserGroupDevice
       zSshConcurrentSessions: 5
       zDeviceTemplates:
+        - DnsMonitor
         - Device
       zCollectorPlugins: ['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'zenoss.snmp.IpServiceMap', 'zenoss.snmp.HRFileSystemMap', 'zenoss.snmp.HRSWRunMap', 'zenoss.snmp.CpuMap', 'zenoss.snmp.SnmpV3EngineIdMap', 'cmd.UserGroupMap']
     templates:
@@ -21,21 +22,18 @@ device_classes:
         datasources:
           numGroups:
             type: COMMAND
-            component: ${here/id}
+            component: '${here/userName} : ${here/primaryGID}'
             commandTemplate: /usr/bin/id -G ${here/id} | /usr/bin/wc -w
             cycletime: 60
             datapoints:
               numGroups: GAUGE
-            usessh: true
+            usessh: !!python/unicode 'true'
         graphs:
           Number of Groups:
-            height: 100
-            width: 500
             units: groups
             graphpoints:
               numGroups:
                 dpName: numGroups_numGroups
-
 classes:
   DEFAULTS:
     base: [zenpacklib.Component]

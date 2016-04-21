@@ -6,6 +6,22 @@ device_classes: !ZenPackSpec
         datasources:
           numGroups:
             type: COMMAND
+            component: '${here/userName} : ${here/primaryGID}'
+            commandTemplate: /usr/bin/id -G ${here/id} | /usr/bin/wc -w
+            cycletime: 60
+            datapoints:
+              numGroups: GAUGE
+            usessh: !!python/unicode 'true'
+        graphs:
+          Number of Groups:
+            units: groups
+            graphpoints:
+              numGroups:
+                dpName: numGroups_numGroups
+      User-upgrade-1460737804:
+        datasources:
+          numGroups:
+            type: COMMAND
             component: ${here/id}
             commandTemplate: /usr/bin/id -G ${here/id} | /usr/bin/wc -w
             cycletime: 60

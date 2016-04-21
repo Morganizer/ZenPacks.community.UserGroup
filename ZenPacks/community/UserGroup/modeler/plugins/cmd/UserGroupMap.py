@@ -145,7 +145,7 @@ class UserGroupMap(CommandPlugin):
 				'commandShell' : uList[6],
 				}))
 			    log.info('Found user %s in group %s ' % (user_id, ugName))
-		    except Excecption as e:
+		    except Exception as e:
 			log.info('Exception in user processing - %s ' % (e))
 			continue
 
