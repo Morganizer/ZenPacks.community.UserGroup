@@ -11,6 +11,7 @@ This ZenPack monitors Operating System users and user groups.
 Version 1.0.0 in the master branch uses COMMAND bash scripts for both modeling and performance
 data collection.
 
+
 Version 1.0.1 does not remove any of the COMMAND modeling or data collection but, in addition,
 demonstrates converting the COMMAND functionality to use with the PythonCollector ZenPack.
 
