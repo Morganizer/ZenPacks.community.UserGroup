@@ -18,7 +18,10 @@ zenpacklib usage
 ----------------
 
 This ZenPack is built with the zenpacklib library so does not have explicit code definitions for
-device classes, device and component objects or zProperties.  Templates are also created through zenpacklib.
+device classes, device and component objects or zProperties; however a User.py file *does* exist
+to provide a method to derive secondary user groups for a user.
+
+Templates are also created through zenpacklib.
 These elements are all created through the zenpack.yaml file in the main directory of the ZenPack.
 See http://zenpacklib.zenoss.com/en/latest/index.html for more information on zenpacklib.
 
@@ -52,7 +55,7 @@ Device and component object classes
 -----------------------------------
 * UserGroupDevice  - it has no new attributes
 
- - uses an icon defined by four-tux-56x56.png, shipped in the resources/icon subdirectory of the ZenPack.
+  - uses an icon defined by four-tux-56x56.png, shipped in the resources/icon subdirectory of the ZenPack.
 
 * UserGroup component class with attributes:
 
@@ -64,7 +67,7 @@ Device and component object classes
   - monitoring_templates set to [UserGroup]
 
 
-* User component with attributes:
+* User component class with attributes:
 
   - userName
   - UID
@@ -133,7 +136,7 @@ Usage
 The new zProperty for zMinUID may be adjusted for a device class or specific device.
 The default is 0 (all users collected).
 
-Ensure that suitable values for zCommandUsername, zCommandPassword, zKeyPath and zCommandPath are customised for the device class
+Ensure that suitable values for zCommandUsername, zCommandPassword and zKeyPath are customised for the device class
 and potentially overridden for specific devices.
 
 Test ssh communications from the command line before expecting Zenoss to perform successful ssh communications.
@@ -145,7 +148,7 @@ Requirements & Dependencies
 * Zenoss Versions Supported:  4.x, 5.x
 * External Dependencies: 
 
-  - The zenpacklib package that this ZenPack is built on, requires PyYAML.  This is installed as standard with Zenoss 5 and with Zenoss 4 with SP457.
+  - The zenpacklib package that this ZenPack is built on, requires PyYAML.  This is installed as standard with Zenoss 5 and with Zenoss 4 with SP457 and later.
     To test whether it is installed, as the zenoss user, enter the python environment and import yaml::
 
         python
