@@ -128,19 +128,9 @@ classes:
       primaryGroupName:
         type: string
         label: Primary Group Name
-        short_label: Primary Group
+        short_label: Group Name
         label_width: 60
         order: 3.5
-
-      # getSecGroups is a method defined in User.py
-      getSecGroups:
-        type: string
-        label: Secondary groups
-        short_label: Sec. Groups
-        label_width: 150
-        order: 3.6
-        api_backendtype: method
-        api_only: true
 
       userComment:
         type: string
@@ -148,21 +138,21 @@ classes:
         short_label: Comment
         label_width: 150
         editable: true    # default is false
-        order: 3.7
+        order: 3.6
 
       homeDir:
         type: string
         label: Home Directory
         short_label: Home
         label_width: 120
-        order: 3.8
+        order: 3.7
 
       commandShell:
         type: string
         label: Command / Shell
         short_label: Shell
         label_width: 150
-        order: 3.9
+        order: 3.8
         display: false   # overridden by grid_display and details_display
         grid_display: false
         details_display: true

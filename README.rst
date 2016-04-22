@@ -2,56 +2,23 @@
 ZenPacks.community.UserGroup
 ============================
 
-
-
 Description
 ===========
 This ZenPack monitors Operating System users and user groups.
+It is almost entirely created with zenpacklib (Version 1.0.11).
+It uses a COMMAND modeler and a COMMAND template.
 
-Version 1.0.0 in the master branch uses COMMAND bash scripts for both modeling and performance
-data collection.
-
-
-Version 1.0.1 does not remove any of the COMMAND modeling or data collection but, in addition,
-demonstrates converting the COMMAND functionality to use with the PythonCollector ZenPack.
-
-Version 1.0.2 adds triggers and notifications for events.
-
-Directories and files are specified as zProperties.
-
-This version of the ZenPack uses zenpacklib and is version 1.0.1 in the python git branch.
-
-This ZenPack is not intended as production-level code.  It provides detailed examples and
-explanations of ZenPack building techniques.  It is designed to have extremely trivial setup
-requirements on monitored devices, at the expense of  performance and efficiency.
-
-Updates for Version 1.0.1 using Python modeler and data collection
-------------------------------------------------------------------
-
-There is a Python modeler plugin in addition to the COMMAND one under modeler/plugins/community/python.
-
-Several PythonDataSourcePlugins are shipped in the dsplugins directory.  There is also a 
-Python datasource in the datasources directory.
-
-Extra shellscripts are provided in the libexec directory to run ssh commands to remote targets. No
-change is required of setup or scripts on remote targets if version 1.0.0 is already deployed.
-
-New Python performance templates are shipped in objects.xml. 
-
-zenpack.yaml updates:
-
-* The zDeviceTemplates attribute of the /Server/Linux/DirFile class is updated to include DiskFreeDfPython. 
-* The zCollectorPlugins attribute of the /Server/Linux/DirFile class has 'community.python.DirFilePythonMap',
-  not 'community.cmd.DirFileMap'
-* The Dir component has monitoring_templates: [Dir, DirPythonXml]
-* The File component has monitoring_templates: [File, FileXml, FilePythonXml, FileStatsPythonXml, FileLsDiskUsedPythonXml, FileStatsParamPythonXml]
+In addition to standard zenpack.yaml definition of Zenoss device classes and
+device and component object classes, along with templates, it also demonstrates
+using custom icons and the use of creating and calling methods for a 
+component object.
 
 
 zenpacklib usage
 ----------------
 
 This ZenPack is built with the zenpacklib library so does not have explicit code definitions for
-device classes, device and component objects or zProperties.  Some templates are also created through zenpacklib.
+device classes, device and component objects or zProperties.  Templates are also created through zenpacklib.
 These elements are all created through the zenpack.yaml file in the main directory of the ZenPack.
 See http://zenpacklib.zenoss.com/en/latest/index.html for more information on zenpacklib.
 
@@ -67,54 +34,57 @@ Features
 Zenoss Device Classes
 ---------------------
 
-zenpacklib creates */Server/Linux/DirFile* with:
+zenpacklib creates */Server/Linux/UserGroup* with:
 
-* zPythonClass: ZenPacks.community.DirFile.DirFileDevice
+* zPythonClass: ZenPacks.community.UserGroup.UserGroupDevice
 * zDeviceTemplates:
 
-  - Disk_free_df
-  - Disk_free_dfPython          (version 1.0.1 Python version only)
+  - DnsMonitor
   - Device
 
-* zCollectorPlugins: ['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'HPDeviceMap', 'DellDeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'zenoss.snmp.IpServiceMap', 'zenoss.snmp.HRFileSystemMap', 'zenoss.snmp.HRSWRunMap', 'zenoss.snmp.CpuMap', 'HPCPUMap', 'DellCPUMap', 'DellPCIMap', 'zenoss.snmp.SnmpV3EngineIdMap',  'community.python.DirFilePythonMap']
-* Several templates are created accessible by this class
+* zSshConcurrentSessions: 5
+* zCollectorPlugins: ['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'zenoss.snmp.IpServiceMap', 'zenoss.snmp.HRFileSystemMap', 'zenoss.snmp.HRSWRunMap', 'zenoss.snmp.CpuMap', 'zenoss.snmp.SnmpV3EngineIdMap', 'cmd.UserGroupMap']
+
+* The User component template is created, available to this class
 
 
 Device and component object classes
 -----------------------------------
-* DirFileDevice  - it has no new attributes
+* UserGroupDevice  - it has no new attributes
 
-* Dir component class with attributes:
+ - uses an icon defined by four-tux-56x56.png, shipped in the resources/icon subdirectory of the ZenPack.
 
-  - dirName
-  - bytesUsed          (version 1.0.1 Python version only)  
-  - For version 1.0.1:
-    - monitoring_templates set to [Dir, DirPythonXml] 
-      where Dir is shipped in zenpack.yaml and DirPythonXml is shipped in objects.xml
+* UserGroup component class with attributes:
 
-* File component with attributes:
+  - groupName
+  - GID
+  - secondaryUsers
+  - hasSecondaries
 
-  - fileName
-  - fileDirName
-  - fileRegex
-  - monitoring_templates set to [File, FileXml] where File is shipped as part of zenpack.yaml and
-    FileXml, containing custom datasource metrics, is shipped in objects.xml.  
-  - For version 1.0.1:
+  - monitoring_templates set to [UserGroup]
 
-      - monitoring_templates set to [File, FileXml, FilePythonXml, FileStatsPythonXml, FileLsDiskUsedPythonXml, FileStatsParamPythonXml] 
-         where File is shipped as part of zenpack.yaml and the rest are shipped in objects.xml.  
+
+* User component with attributes:
+
+  - userName
+  - UID
+  - primaryGID
+  - primaryGroupName
+  - getSecGroups  (this demonstrates an object method property)
+  - userComment
+  - homeDir
+  - commandShell
+
+  - monitoring_templates set to [User]
 
 Relationships are:
-  * DirFileDevice -> contains many Dir components -> contains many File components
+  * UserGroupDevice -> contains many UserGroup components -> contains many User components
 
 Properties
 ----------
 
-zenpacklib creates three pairs of zProperties to specify directory names to search for and a regular expression to denote
-files within those directories to report on.  These are of the format:
-
-  - zMonitorDir1
-  - zMonitorDir1File
+zenpacklib creates a zProperty, *zMinUID* used to limit the number of users discovered to
+those with a UID greater than or equal to zMinUID.
 
 
 Modeler Plugins
@@ -122,21 +92,10 @@ Modeler Plugins
 
 There is no device-level modeler.
 
-* DirFileMap in modeler/plugins/community/cmd, a COMMAND modeler which populates:
+* UserGroupMap in modeler/plugins/cmd, a COMMAND modeler which populates:
 
-  - Directories
-  - Files within the associated directory that match the regex expression
-
-* DirFilePythonMap in modeler/plugins/community/Python, a Python modeler which does
-  exactly the same job, populating:
-
-  - Directories
-  - Files within the associated directory that match the regex expression
-  - Populates the bytesUsed attribute of Dir for version 1.0.1  
-
-Note that, as shipped, the DirFileMap modeler is restricted to searching directories under
-/opt/zenoss/local ; this is for performance reasons. The DirFilPythonMap modeler is *not* subject
-to similar restrictions.
+  - UserGroups
+  - Users with the UserGroup as their primary GID
 
 
 Monitoring Templates
@@ -144,142 +103,46 @@ Monitoring Templates
 
 * Device templates
    
-  - Disk_free_df with a single COMMAND datasource to run df_root.sh on remote targets to deliver disk free information, with graph
-  - Version 1.0.1 has in addition:  
-
-    - DiskFreeDfPython with a single Python datasource that runs the 
-      ZenPacks.community.DirFile.dsplugins.RootDiskFreePythonDeviceData plugin, which is driven by 
-      df_root_ssh.sh in the libexec directory.
-    - Graph title denotes Python collection  
+  - no device templates are shipped
 
 * Component templates
 
-  - Dir with a single COMMAND datasource to gather disk usage (du) information for the directory, with graph
-  - Version 1.0.1 has in addition:  
-
-    - DirPythonXml with a single Python datasource that runs the 
-      ZenPacks.community.DirFile.dsplugins.DirDiskUsedPythonDeviceData plugin, which is driven by
-      dudir_ssh.sh in the libexec directory
-
-  - File with several COMMAND datasources (shipped in zenpack.yaml):
-
-    - FileDiskUsed - uses du on remote target, passing filename as parameter, with graph
-    - FileLsDiskUsed - uses ls on remote target and employs ZenPack parser to allocate correct data to file components, with graph
-    - FileTest1WithoutCount - runs remote file_stats.sh to gather count of lines containing "without" or "test 1", 
-      search string hard-coded, with graph
-
-  - FileXml (shipped in objects.xml)    
-
-    - without - runs remote file_stats_param.sh through a Zenapck-delivered datasource, *DirFileDataSource*, to gather 
-      count of lines containing "without", where search string is supplied in template GUI, with graph
-    - test_1 - runs remote file_stats_param.sh through a Zenapck-delivered datasource, *DirFileDataSource*, to gather 
-      count of lines containing "test 1", where search string is supplied in template GUI, with graph
-
-  - Version 1.0.1 has in addition:  
-
-    - FilePythonXml, with a single Python datasource that runs the 
-      ZenPacks.community.DirFile.dsplugins.FileDiskUsedPythonDeviceData plugin, which is driven by
-      dufile_ssh.sh in the libexec directory
-    - FileLsDiskUsedPythonXml, with a single Python datasource that runs the 
-      ZenPacks.community.DirFile.dsplugins.LsFileDiskUsedPythonDeviceData plugin, which is driven by
-      lsFileDiskUsed_ssh.sh in the libexec directory
-    - FileStatsPythonXml, with a single Python datasource that runs the 
-      ZenPacks.community.DirFile.dsplugins.FileStatsPythonDeviceData plugin, which is driven by
-      file_stats_ssh.sh in the libexec directory
-
+  - User with a single COMMAND datasource to gather the number of groups for a given user.
 
 
 Datasources
 -----------
 
-DirFileDataSource to supply customised datasource GUI to specify a search string for file matching.  The CommandPlugin
-method is used to collect the data.
-
-Version 1.0.1 also has DirFilePythonDataSource which performs a similar task, driven by file_stats_param_ssh.sh
-in the libexec directory.
-
-Parsers
--------
-
-The FileLsDiskUsed template uses a customised parser to allocate correct ls values to file components.
-
+None.
 
 Events
 ------
 
-The */DirFile* event class is shipped as part of objects.xml.
+None.
 
 
 GUI modifications
 -----------------
 
+The hasSecondaries attribute of the UserGroup demonstrates the use of a renderer in zenpack.yaml
+to display a coloured icon.
 
 Usage
 =====
 
-The new zProperties for zMonitorDir and zMonitorDirFile should be customised for the /Server/Linux/DirFile device class and,
-potentially overridden for specific devices.
+The new zProperty for zMinUID may be adjusted for a device class or specific device.
+The default is 0 (all users collected).
 
 Ensure that suitable values for zCommandUsername, zCommandPassword, zKeyPath and zCommandPath are customised for the device class
 and potentially overridden for specific devices.
 
 Test ssh communications from the command line before expecting Zenoss to perform successful ssh communications.
 
-Some command templates require bash scripts to be installed on remote targets.  These are shipped in the 
-libexec directory of the ZenPack and should be transferred to remote devices using local methods (ftp, scp, Chef, puppet, ...).
-On the targets, the scripts need to be in the directory specified by zCommandPath for the device. The scripts must be executable
-by the user specified in the device's zCommandUsername property.
-
-* df_root.sh
-* file_stats.sh
-* file_stats_param.sh  
-
-The remote scripts are identical, regardless of the version of ZenPack deployed.
-
-Test files
-----------
-
-It is recommended that the ZenPack be tested against a small number of devices, each having a small
-number of test files.
-
-Note that the modeler plugin, as shipped, will *only* search for files and directories under the /opt/zenoss/local
-directory hierarchy.
-
-The ZenPack was tested against the following test hierarchy::
-
-
-        zenplug@bino:/opt/zenoss/local/fredtest> ls -l *
-        -rw-r--r-- 1 jane users  126 Jan 14 14:40 fred1.log_20151110
-        -rw-r--r-- 1 jane users  434 Jan 14 14:40 fred1.log_20151116
-        -rw-r--r-- 1 jane users 1047 Jan 14 14:41 fred1.log_20151202
-        -rw-r--r-- 1 jane users  961 Jan 18 19:10 fred1.log_20160118
-
-        test:
-        total 12
-        -rw-r--r-- 1 jane users  499 Dec  2 17:38 fred2.log_20151124
-        -rw-r--r-- 1 jane users  499 Dec  3 19:17 fred2.log_20151125
-        drwxr-xr-x 2 jane users 4096 Nov 29 18:17 lowertest
-        zenplug@bino:/opt/zenoss/local/fredtest> 
-
-where each file has a number of lines containing "test 1" and "without", the search strings that are
-hard-coded into some of the datasource examples.
-
-Note that the directories must have read and execute access for the zCommandUsername and the files
-must have read access.
-
-The DirFile zProperties used for testing were::
-
-        zMonitorDir1 /opt/zenoss/local/fredtest
-        zMonitorDir1File fred1.*
-        zMonitorDir3 /opt/zenoss/local/fredtest/test
-        zMonitorDir3File fred2\.log.*
-
-
 
 Requirements & Dependencies
 ===========================
 
-* Zenoss Versions Supported:  4.x
+* Zenoss Versions Supported:  4.x, 5.x
 * External Dependencies: 
 
   - The zenpacklib package that this ZenPack is built on, requires PyYAML.  This is installed as standard with Zenoss 5 and with Zenoss 4 with SP457.
@@ -298,7 +161,7 @@ Requirements & Dependencies
     and then rerun the test above.
 
 * ZenPacks:
-  - ZenPacks.zenoss.PythonCollector >= 1.6   
+  - None
 
 
 * Installation Notes: 
@@ -312,7 +175,7 @@ Download
 Download the appropriate package for your Zenoss version from the list
 below.
 
-* Zenoss 4.0+ `Latest Package for Python 2.7`_
+* Zenoss 4.0+ and 5.x  `Latest Package for Python 2.7`_
 
 ZenPack installation
 ======================
@@ -323,7 +186,7 @@ zenpack command line.
 To install in development mode, find the repository on github and use the *Download ZIP* button
 (right-hand margin) to download a tgz file and unpack it to a local directory, say,
 /code/ZenPacks .  Install from /code/ZenPacks with::
-  zenpack --link --install ZenPacks.community.DirFile
+  zenpack --link --install ZenPacks.community.UserGroup
   Restart zenoss after installation.
 
 Device Support
@@ -334,22 +197,12 @@ This ZenPack only requires very basic Unix commands on the target devices.
 Limitations and Troubleshooting
 ===============================
 
-There is an issue sometimes with zenpacklib supporting templates with custom datasources.  
-For this reason, the test_1 and without datasources and their associated graphs are shipped in
-a separate FileXml template in objects.xml.  Attempts to ship them specified in zenpack.yaml
-appears to result in an empty CommandTemplate field, even though ZMI shows the correct entry.
-The result is that data is not collected and events are generated from zenhub complaining about
-an incorrect TALES expression.
-
-The File object class in zenpack.yaml has monitoring_templates set to [File, FileXml].
 
 
 Change History
 ==============
 * 1.0.0
    - Initial Release
-* 1.0.1
-   - Initial Release for PythonCollector
 
 
 Screenshots
@@ -360,7 +213,7 @@ See the screenshots directory.
 
 .. External References Below. Nothing Below This Line Should Be Rendered
 
-.. _Latest Package for Python 2.7: https://github.com/ZenossDevGuide/ZenPacks.community.DirFile/blob/events/dist/ZenPacks.community.DirFile-1.0.2-py2.7.egg?raw=true
+.. _Latest Package for Python 2.7: https://github.com/ZenossDevGuide/ZenPacks.community.UserGroup/blob/master/dist/ZenPacks.community.UserGroup-1.0.0-py2.7.egg?raw=true
 
 Acknowledgements
 ================
