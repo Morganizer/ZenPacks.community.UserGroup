@@ -91,11 +91,9 @@ classes:
 
     relationships:
       #userGroupDevice:            # back to the containing device
-      #uGDevice:                          # back to the os relationship on the containing device
-      os:                          # back to the os relationship on the containing device
+      uGDevice:                          # back to the os relationship on the containing device
         #label: userGroupDevice
-        #label: uG Device
-        label: OS
+        label: uG Device
         display: true             # Ensures relationship shown in Details dropdown
       users:                      # down to User sub-component
         label: users
@@ -183,8 +181,9 @@ classes:
         order: 3.3
 
 class_relationships:
-  #- Products.ZenModel.Device.Device(userGroups) 1:MC UserGroup(uGDevice)
-  - Products.ZenModel.OperatingSystem.OperatingSystem(userGroups) 1:MC UserGroup(os)
+  #- UserGroupDevice(userGroups) 1:MC UserGroup(userGroupDevice)
+  # Products.ZenModel.OperatingSystem.OperatingSystem 1:MC newComponent
+  - Products.ZenModel.Device.Device(userGroups) 1:MC UserGroup(uGDevice)
   - UserGroup(users) 1:MC User(primaryUserGroup)
 
 

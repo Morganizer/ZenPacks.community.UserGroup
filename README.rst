@@ -206,6 +206,14 @@ Change History
 ==============
 * 1.0.0
    - Initial Release
+* 1.0.1
+   - UserGroup is a component of Device in core code
+   - or UserGroup is a component of compinet os  in core code
+   - this is in GitHub device branch
+   - 3 files need changing to swap UserGroup from a device component to an os subcomponent
+      - zenpack.yaml - replace with either zenpack.yaml_device or zenpack.yaml_osComp
+      - __init__.py - replace with __init__.py_device or __init__.py_osComp
+      - modeler/plugins/cmd/UserGroupMap.py - replace with UserGroupMap.py_device or UserGroupMap.py_osComp
 
 
 Screenshots
@@ -216,7 +224,7 @@ See the screenshots directory.
 
 .. External References Below. Nothing Below This Line Should Be Rendered
 
-.. _Latest Package for Python 2.7: https://github.com/ZenossDevGuide/ZenPacks.community.UserGroup/blob/master/dist/ZenPacks.community.UserGroup-1.0.0-py2.7.egg?raw=true
+.. _Latest Package for Python 2.7: https://github.com/ZenossDevGuide/ZenPacks.community.UserGroup/blob/device/dist/ZenPacks.community.UserGroup-1.0.1-py2.7.egg?raw=true
 
 Acknowledgements
 ================

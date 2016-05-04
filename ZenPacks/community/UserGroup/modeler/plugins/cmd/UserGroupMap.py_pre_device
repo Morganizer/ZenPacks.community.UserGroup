@@ -28,8 +28,6 @@ class UserGroupMap(CommandPlugin):
     # classname not required as largely deprecated. classname is the same as the module name here
     relname = 'userGroups'
     modname = 'ZenPacks.community.UserGroup.UserGroup'
-    # Need to add UserGroup objects to the os component relationship
-    compname = 'os'
 
     deviceProperties = CommandPlugin.deviceProperties +(
         'zMinUID',
@@ -85,7 +83,6 @@ class UserGroupMap(CommandPlugin):
 		    # Add an Object Map for this user group 
 		    # Use prepId to ensure id is unique and doesn't include any dodgy characters like /
 		    # om = self.objectMap() inherits modname and compname (null) from plugin
-		    # om = self.objectMap() inherits modname and compname - now os - from plugin
 		    om = self.objectMap()
 		    om.id = ug_id
 		    om.groupName = ugList[0]
@@ -101,8 +98,7 @@ class UserGroupMap(CommandPlugin):
 		    rm.append(om)
 		    # For this user group, create a map for associated users, passing this ug_id as part of compname
 		    log.debug('GID is %s ' % (om.GID))
-		    #um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'userGroups/%s' % ug_id, log))
-		    um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'os/userGroups/%s' % ug_id, log))
+		    um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'userGroups/%s' % ug_id, log))
 		    #log.debug('ug %s has um  %s \n um relname is %s and um compname is %s ' % (om.id, um, um.relname, um.compname))
 		    maps['myusers'].append(um)
                 except Exception as e: 
@@ -114,7 +110,6 @@ class UserGroupMap(CommandPlugin):
             return None
 
         # Add the rm relationships to maps['myuserGroups']
-        #log.debug(' rm is %s ' % (rm))
         maps['myuserGroups'].append(rm)
 
         # Need this complicated setup with maps = collections.OrderedDict and the chain return

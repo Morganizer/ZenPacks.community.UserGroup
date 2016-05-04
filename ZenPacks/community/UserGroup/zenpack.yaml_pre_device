@@ -11,8 +11,7 @@ device_classes:
   /Server/Linux/UserGroup:
     remove: False   # False is default - ensure no instances left in this class when ZenPack removed
     zProperties:
-      # Don't set zPythonClass - it should default to Device
-      #zPythonClass: ZenPacks.community.UserGroup.UserGroupDevice
+      zPythonClass: ZenPacks.community.UserGroup.UserGroupDevice
       zSshConcurrentSessions: 5
       zDeviceTemplates:
         - DnsMonitor
@@ -39,17 +38,16 @@ classes:
   DEFAULTS:
     base: [zenpacklib.Component]
 
-  # This device object class disappears
-  #UserGroupDevice:
-  #  base: [zenpacklib.Device]
-  #  meta_type: UserGroupDevice  # Will default to this but in for completeness
-  #  label: UserGroup Host
-  #  icon: four-tux-56x56.png
+  UserGroupDevice:
+    base: [zenpacklib.Device]
+    meta_type: UserGroupDevice  # Will default to this but in for completeness
+    label: UserGroup Host
+    icon: four-tux-56x56.png
 
-    #relationships:
-    #  userGroups:
-    #    label: User Groups
-    #    display: true   # this has no effect as it is on the device class
+    relationships:
+      userGroups:
+        label: User Groups
+        display: true   # this has no effect as it is on the device class
 
   UserGroup:
     label: User Group  # NB It is label, with spaces removed, that is used to match a component template
@@ -90,12 +88,8 @@ classes:
         order: 3.4
 
     relationships:
-      #userGroupDevice:            # back to the containing device
-      #uGDevice:                          # back to the os relationship on the containing device
-      os:                          # back to the os relationship on the containing device
-        #label: userGroupDevice
-        #label: uG Device
-        label: OS
+      userGroupDevice:            # back to the containing device
+        label: userGroupDevice
         display: true             # Ensures relationship shown in Details dropdown
       users:                      # down to User sub-component
         label: users
@@ -183,8 +177,7 @@ classes:
         order: 3.3
 
 class_relationships:
-  #- Products.ZenModel.Device.Device(userGroups) 1:MC UserGroup(uGDevice)
-  - Products.ZenModel.OperatingSystem.OperatingSystem(userGroups) 1:MC UserGroup(os)
+  - UserGroupDevice(userGroups) 1:MC UserGroup(userGroupDevice)
   - UserGroup(users) 1:MC User(primaryUserGroup)
 
 
