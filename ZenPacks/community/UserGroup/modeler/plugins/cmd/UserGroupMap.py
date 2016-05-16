@@ -29,7 +29,7 @@ class UserGroupMap(CommandPlugin):
     relname = 'userGroups'
     modname = 'ZenPacks.community.UserGroup.UserGroup'
     # Need to add UserGroup objects to the os component relationship
-    compname = 'os'
+    #compname = 'os'
 
     deviceProperties = CommandPlugin.deviceProperties +(
         'zMinUID',
@@ -101,8 +101,8 @@ class UserGroupMap(CommandPlugin):
 		    rm.append(om)
 		    # For this user group, create a map for associated users, passing this ug_id as part of compname
 		    log.debug('GID is %s ' % (om.GID))
-		    #um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'userGroups/%s' % ug_id, log))
-		    um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'os/userGroups/%s' % ug_id, log))
+		    um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'userGroups/%s' % ug_id, log))
+		    #um = (self.getUserMap( device, lines[1], int(ugList[2]), ugList[0], 'os/userGroups/%s' % ug_id, log))
 		    #log.debug('ug %s has um  %s \n um relname is %s and um compname is %s ' % (om.id, um, um.relname, um.compname))
 		    maps['myusers'].append(um)
                 except Exception as e: 

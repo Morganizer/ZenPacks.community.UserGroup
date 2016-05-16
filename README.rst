@@ -208,7 +208,7 @@ Change History
    - Initial Release
 * 1.0.1
    - UserGroup is a component of Device in core code
-   - or UserGroup is a component of compinet os  in core code
+   - or UserGroup is a component of component os  in core code
    - this is in GitHub device branch
    - 3 files need changing to swap UserGroup from a device component to an os subcomponent
       - zenpack.yaml - replace with either zenpack.yaml_device or zenpack.yaml_osComp
