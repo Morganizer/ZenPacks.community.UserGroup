@@ -182,7 +182,6 @@ classes:
 
 class_relationships:
   #- UserGroupDevice(userGroups) 1:MC UserGroup(userGroupDevice)
-  # Products.ZenModel.OperatingSystem.OperatingSystem 1:MC newComponent
   - Products.ZenModel.Device.Device(userGroups) 1:MC UserGroup(uGDevice)
   - UserGroup(users) 1:MC User(primaryUserGroup)
 

@@ -29,7 +29,7 @@ ${here/userName} : ${here/primaryGID}
 60
 </property>
 <property type="boolean" id="usessh" mode="w" >
-true
+True
 </property>
 <property type="string" id="parser" mode="w" >
 Auto
