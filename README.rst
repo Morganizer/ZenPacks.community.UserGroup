@@ -13,6 +13,9 @@ device and component object classes, along with templates, it also demonstrates
 using custom icons and the use of creating and calling methods for a 
 component object.
 
+Version 1.0.1 of the ZenPack demonstrates adding users and groups as
+components of the standard, Zenoss-provided Device object class.
+
 
 zenpacklib usage
 ----------------
@@ -56,6 +59,7 @@ Device and component object classes
 * UserGroupDevice  - it has no new attributes
 
   - uses an icon defined by four-tux-56x56.png, shipped in the resources/icon subdirectory of the ZenPack.
+  - not used in Version 1.0.1
 
 * UserGroup component class with attributes:
 
@@ -141,6 +145,9 @@ and potentially overridden for specific devices.
 
 Test ssh communications from the command line before expecting Zenoss to perform successful ssh communications.
 
+If using Version 1.0.1, the cmd.UserGroupMap modeler needs to be added to any Zenoss device class needing
+to discover users and groups.
+
 
 Requirements & Dependencies
 ===========================
@@ -208,11 +215,13 @@ Change History
    - Initial Release
 * 1.0.1
    - UserGroup is a component of Device in core code
-   - or UserGroup is a component of component os  in core code
+   - Device templates are bound to /Server/Linux and /Server/Linux/UserGroup in the base directory __init__.py
+   - The zSshConcurrentSessions zProperty is also modified in __init__.py
+   - Experimental code is shipped to define UserGroup as a component of the OperatingSystem component in core code
    - this is in GitHub device branch
    - 3 files need changing to swap UserGroup from a device component to an os subcomponent
       - zenpack.yaml - replace with either zenpack.yaml_device or zenpack.yaml_osComp
-      - __init__.py - replace with __init__.py_device or __init__.py_osComp
+      - __init__.py - replace with __init__.py_device / __init__.py_bind_templates or with __init__.py_osComp
       - modeler/plugins/cmd/UserGroupMap.py - replace with UserGroupMap.py_device or UserGroupMap.py_osComp
 
 
