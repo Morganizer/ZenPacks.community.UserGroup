@@ -23,6 +23,11 @@ class User(schema.User):                      # class must match component objec
         d = self.device()		      # get this user's device object
         secGroupList = []
         for g in d.userGroups():              # cycle through all this device's groups
-            if self.id in g.secondaryUsers:   # looking for this user in group's secondaries
-                secGroupList.append(g.id)     # add the group id on a match
+            #if self.id in g.secondaryUsers:   # looking for this user in group's secondaries
+            # secondaryUsers is a comma-separated string
+            for su in g.secondaryUsers.split(','):
+		if self.id == su.strip():      # looking for this user in group's secondaries
+		    secGroupList.append(g.id)  # add the group id on a match
+                    break
+
         return ','.join(secGroupList)         # return list, converted to string, comma sep
